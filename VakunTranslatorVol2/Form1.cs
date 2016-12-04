@@ -92,15 +92,23 @@ namespace VakunTranslatorVol2
         }
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            NewFileClick?.Invoke();
+            if (CheckLastSourceCode())
+            {
+                NewFileClick?.Invoke();
+            }
         }
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileClick?.Invoke();
+            if (CheckLastSourceCode())
+            {
+                OpenFileClick?.Invoke();
+                openFileSource = lastSource;
+            }
         }
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileClick?.Invoke(sourceBox.Text);
+            openFileSource = lastSource;
         }
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -118,7 +126,17 @@ namespace VakunTranslatorVol2
         {
             pdaWindow.ShowDialog();
         }
-
+        private bool CheckLastSourceCode()
+        {
+            if (openFileSource != sourceBox.Text)
+            {
+                if (MessageBox.Show("Some changes were not saved. Continue?", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
         private void checkGrammarToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
@@ -126,6 +144,7 @@ namespace VakunTranslatorVol2
 
         private const int CONSOLE_HEIGHT = 250;
         private string lastSource = string.Empty;
+        private string openFileSource = string.Empty;
         private Colorizer<Lexeme> colorizer;
         private AnalyzerWindow analyzerWindow = new AnalyzerWindow();
         private PDAOutputForm pdaWindow = new PDAOutputForm();
